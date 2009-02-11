@@ -1,14 +1,14 @@
 /* Following are the presentation styles -- edit away! */
 
 body {
-  background: #FFF url(bodybg.gif) -16px 0 no-repeat;
-  color: #000; 
+  background: #77a1d1 url(pragmatic-bg.png) 0 0 repeat-y;
+  color: #EEE;
   font-size: 2.25em;
 }
 
 :link, :visited {
   text-decoration: none; 
-  color: #00C;
+  color: #005;
 }
 
 #controls :active {
@@ -112,17 +112,18 @@ sup {
 }
 
 div#header, div#footer {
-  background: #005; 
-  color: #AAB;
+  color: #BBC;
   font-family: Verdana, Helvetica, sans-serif;
 }
 
 div#header {
-  background: #005 url(bodybg.gif) -16px 0 no-repeat;
+  background: #4d6582 url(pragmatic-ruby-bg.png) 0 0 no-repeat;
   line-height: 1px;
+  border-bottom: 1px solid #333;
 }
 
 div#footer {
+  background: url(bg-shade.png);
   font-size: 0.5em; 
   font-weight: bold; 
   padding: 1em 0;
@@ -147,7 +148,7 @@ div.long {font-size: 0.75em;}
   white-space: nowrap;
   font: bold 150%/1em Helvetica, sans-serif;
   text-transform: capitalize;
-  color: #DDE; background: #005;
+  color: #DDE;
 }
 
 .slide h3 {font-size: 130%;}
@@ -244,7 +245,7 @@ html>body .external {border-bottom: none;}
 }
 
 .incremental, .incremental *, .incremental *:after {
-  color: #DDE;
+  color: #5791c1;
   visibility: visible;
 }
 
@@ -253,7 +254,7 @@ img.incremental {
 }
 
 .slide .current {
-  color: #B02;
+  color: #C02;
 }
 
 

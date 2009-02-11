@@ -261,7 +261,7 @@ test_ldif: clean_ldif
 <ul class="incremental">
   <li>C'est pas mal</li>
   <li>Ca marche plus ou moins, pour les 1ères tâches simple</li>
-  <li>Mais on peut mieux faire<li>
+  <li>Mais on peut mieux faire</li>
 </ul>
 </li>
 
@@ -276,31 +276,141 @@ test_ldif: clean_ldif
 </li>
 
 <li class="slide">
-<h1>Version Makefile</h1>
-<pre class="sh_makefile">
-INFILE  := customer-orig.ldif
-OUTFILE := customer-clean.ldif
-CLEANER := ./customer-clean-ldif.rb
-ROOTDN  := "cn=admin, o=customer, c=fr"
-ROOTPW  := "XXXXX"
+<h1>Version Rakefile</h1>
+<pre class="sh_ruby">
+TESTDIR  = File.join(File.dirname(__FILE__), "test")
+INFILE	 = File.join(TESTDIR, "customer-orig.ldif")
+CLEANER  = File.join("lib", "customer-clean-ldif.rb")
+ROOTDN   = "cn=admin, o=custmer, c=fr"
+ROOTPW   = "XXXXXX"
 
-all:
-        @echo "Vous devez specifier la commande a executer"
-        exit 1
+#...
 
-clean_ldif:
-        ssh old-srv "slapcat" > $(INFILE)
-        $(CLEANER) $(INFILE) > $(OUTFILE)
+namespace :ldap do
+  desc "Récupération de l'annuaire 'isis' et nettoyage"
+  task :clean_ldif =&gt; :config do
+    puts "Récupération de l'annuaire LDAP d'isis"
+    puts_and_exec %{ssh old-srv "slapcat" &gt; "#{INFILE}"}
+    puts "Nettoyage de l'annuaire LDAP"
+    puts_and_exec %{#{CLEANER} "#{INFILE}" &gt; "#{OUTFILE}"}
+  end
 
-test_ldif: clean_ldif
-        ldapadd -n -x -h localhost -D $(ROOTDN) -w $(ROOTPW) -f $(OUTFILE)
-#...etc...
+  desc "Test d'insertion des enregistrements LDAP sur #{HOSTNAME}"
+  task :test_ldif =&gt; :clean_ldif do
+    puts "Simulation d'insertion des enregistrements LDAP"
+    puts_and_exec %{ldapadd -n -x -h localhost -D "#{ROOTDN}" -w "#{ROOTPW}" -f "#{OUTFILE}"}
+  end
+#...
 </pre>
+</li>
+
+<li class="slide">
+<h1>Version Rakefile</h1>
+<p>Première impression :</p>
 <ul class="incremental">
-  <li>C'est pas mal</li>
-  <li>Ca marche plus ou moins, pour les 1ères tâches simple</li>
-  <li>Mais on peut mieux faire<li>
+  <li>C'est mieux</li>
+  <li>La configuration est encore codée en dur dans le script</li>
+  <li>On peut mieux faire encore</li>
 </ul>
+</li>
+
+<li class="slide">
+<h1>Où stocker la configuration ?</h1>
+<p>Quand d'autres pensent à :</p>
+<ul class="incremental">
+    <li>Un fichier de configuration XML</li>
+</ul>
+<p class="incremental">Nous faisons appel à :</p>
+<img class="incremental" style="align: center" src="pix/superman_yaml.png">
+</li>
+
+<li class="slide">
+<h1>YAML to the rescue</h1>
+<p>On va utiliser YAML pour le stockage de la configuration :</p>
+<pre class="sh_ruby">
+# Configuration de l'outil de migration LDAP/IMAP
+# Date : 2009-01-13
+# Copyright (C) 2009 Farzad FARID <ffarid@pragmatic-source.com>
+
+hostname: new-srv
+ldap:
+  user: cn=admin, o=customer, c=fr
+  password: XXXXXXXX
+  infile: customer-orig.ldif
+  outfile: customer-clean.ldif
+imap:
+  user: cyrus
+  password: YYYYY
+</pre>
+</li>
+
+<li class="slide">
+<h1>YAML to the rescue</h1>
+<ul class="incremental">
+<li>Le code Ruby/Rake devient plus propre</li>
+<li>Il n'y a pas plus de ligne de code</li>
+</ul>
+<pre class="sh_ruby">
+MyConfig = YAML.load(IO.read(File.join(File.dirname(__FILE__), "config.yml")))
+HOSTNAME = MyConfig["hostname"]
+ROOTDN   = MyConfig["ldap"]["user"]
+ROOTPW   = MyConfig["ldap"]["password"]
+INFILE   = File.join(DATADIR, MyConfig["ldap"]["infile"])
+#...
+  # Attention : cette commande détruit le contenu de l'annuaire
+  desc "Insère les enregistrements LDAP sur #{HOSTNAME} en détruisant le contenu précédent"
+  task :insert_full =&gt; [ :clean_ldif, :empty_directory] do
+    puts "Insertion complète des enregistrements LDAP"
+    show_exec %{sleep 2
+    ldapadd -c -x -h localhost -D "#{ROOTDN}" -w "#{ROOTPW}" -f "#{OUTFILE}"}
+  end
+#...
+</pre>
+
+<ul class="incremental">
+  <li>C'est beaucoup plus propre</li>
+</ul>
+</li>
+
+<li class="slide">
+<h1>Nettoyage LDAP</h1>
+<p>Comment fonctionne le script principal de nettoyage LDAP ?</p>
+<ul class="incremental">
+<li>C'est un programme indépendant du Rakefile (question de taille)</li>
+<li>Il nettoie en fait un dump LDIF, car c'est plus simple que de faire des manipulation directement avec le protocole LDAP</li>
+<li>Puis le dump est importé dans le nouvel annuaire</li>
+</ul>
+</li>
+
+<li class="slide">
+<h1>Nettoyage LDAP</h1>
+<p>Comment fonctionne le script principal de nettoyage LDAP ?</p>
+<ul>
+    <li>Syntaxe élégante en Ruby</li>
+</ul>
+<pre class="sh_ruby">
+if rdn_name =="pu" &amp;&amp; !attrs["objectclass"].include?("projectUnit")
+  # On enlève les OC erronées, s'il y en a
+  attrs["objectclass"] -= [ "societyUnit"]
+  attrs["objectclass"] &lt;&lt; "projectUnit"
+  attrs.delete("su")
+end
+
+if (rdn_name == "su" &amp;&amp; rdn_value == "glucoz.com") || dn == "su=gensduvoyage.com, o=customer, c=fr"
+  attrs.delete("ou")
+end
+
+# Pour certains RDN "ou=", l'object class organizationalUnit correspondant
+# est manquant
+if rdn_name == "ou" &amp;&amp; !attrs["objectclass"].include?("organizationalUnit")
+  attrs["objectclass"] &lt;&lt; "organizationalUnit"
+end
+<pre>
+</li>
+
+<li class="slide">
+<h1>Les avantages de Ruby</h1>
+
 </li>
 
 <li class="slide">

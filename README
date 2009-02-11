@@ -1,0 +1,18 @@
+                    De Makefile à Rakefile
+
+Présentation sur l'utilisation de Ruby pour des tâches d'intégration système.
+
+Auteur : Farzad FARID <ffarid@pragmatic-source.com>
+Date : 11 février 2009
+Licence : 
+ * Le logiciel S5, les logos et images sont distribués sous leur propre licence
+ * La présentation elle-même est distribué sous la licence Creative Commons BY-SA 3.0
+   (http://creativecommons.org/licenses/by-nc-sa/3.0/deed.fr)
+
+La présentation est basée sur l'outil S5 d'Eric Meyer.
+Le logo et les couleurs de fond proviennent du site http://www.ruby-lang.org/
+
+Hormis la personnalisation de la feuille de style, je l'ai modifiée avec
+les extensions suivantes :
+ * Ajout du style "p.citation"
+

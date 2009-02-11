@@ -81,6 +81,244 @@
 </li>
 
 <li class="slide">
+    <h1>Présentation du contexte (1)</h1>
+    <p>Ce que le client a aujourd'hui :</p>
+    <ul class="incremental">
+        <li>Serveur de message et annuaire sur base Debian Linux</li>
+        <li>Serveur IMAP Cyrus IMAP 2.1.14 (<b>vieux !</b>)</li>
+        <li>Annuaire OpenLDAP 2.0.23 (<b>vieux !!</b>)</li>
+        <li>Debian 3.1 (<b>antédéluvien..</b>)</li>
+    </ul>
+</li>
+
+<li class="slide">
+<h1>Présentation du contexte (2)</h1>
+<p>Extensions sauvages du schéma LDAP</p>
+<pre class="sh_diff">
+diff -ur schema/core.schema ../../../isis/ldap/schema/core.schema
+--- schema/core.schema 2002-02-08 18:38:54.000000000 +0100
++++ ../../../isis/ldap/schema/core.schema 2007-10-15 10:31:04.000000000 +0200
+@@ -1,3 +1,6 @@
++# Objectclass 'person' a ete modifier pour prendre en compte l attribut
++# usergroup pour gerer les differents droits d acces a la base ldap sur l 'intra
++#
+# $OpenLDAP: pkg/ldap/servers/slapd/schema/core.schema,v 1.7.2.18 2002/02/08 17:38:54 kurt Exp $
+#
+# OpenLDAP Core schema
+@@ -369,7 +379,7 @@
+objectclass ( 2.5.6.6 NAME 'person' SUP top STRUCTURAL
+MUST ( sn $ cn )
+- MAY ( userPassword $ telephoneNumber $ seeAlso $ description ) )
++ MAY ( userPassword $ telephoneNumber $ seeAlso $ description $ intragroup) )
+objectclass ( 2.5.6.7 NAME 'organizationalPerson' SUP person STRUCTURAL
+MAY ( title $ x121Address $ registeredAddress $ destinationIndicator $</pre>
+</li>
+
+<li class="slide">
+    <h1>Présentation du contexte (3)</h1>
+    <p>Ce que le client veut :</p>
+    <ul class="incremental">
+        <li>Serveur Debian Linux 4.0 (<b>bon ok, déjà un peu vieux...</b>)</li>
+        <li>Serveur IMAP Cyrus IMAP 2.2.13</li>
+        <li>Annuaire OpenLDAP 2.3.30</li>
+    </ul>
+</li>
+
+<li class="slide">
+<h1>Problèmes</h1>
+<ul class="incremental">
+<li>Il faut réinstaller un serveur complet, avec LDAP, SMTP et IMAP
+  <ul class="incremental">
+    <li>OK, facile</li>
+  </ul>
+</li>
+<li>Il faut refaire le schéma LDAP
+  <ul class="incremental">
+    <li>OK, facile</li>
+  </ul>
+</li>
+<li>Il faut transférer toutes les boîtes mail
+  <ul class="incremental">
+    <li>Hum.. OK, pas trop difficile</li>
+  </ul>
+</li>
+<li>Il faut convertir et standardiser tout le contenu de l'annuaire
+  <ul class="incremental">
+    <li><b>ARGH !!</b></li>
+  </ul>
+</li>
+<li>=&gt; Il va falloir écrire un logiciel de conversion/nettoyage.</li>
+</ul>
+</li>
+
+<li class="slide">
+<h1>Quel langage utiliser ?</h1>
+<p>Solutions possibles :</p>
+<ul class="incremental">
+<li>Solution 1 : Shell
+  <ul>
+    <li>Trop de programmes à enchaîner</li>
+    <li>Stockage temporaire et traitement des données difficiles</li>
+    <li>Il faudra de toute façon écrire des portions dans un langage de plus haut niveau</li>
+  </ul>
+<li><b>NON</b></li>
+</ul>
+</li>
+
+<li class="slide">
+<h1>Quel langage utiliser ?</h1>
+<p>Solutions possibles :</p>
+<ul>
+<li>Solutions 2
+  <ul>
+    <li>
+    <pre class="sh_perl">
+#:: ::-| ::-| .-. :||-:: 0-| .-| ::||-| .:|-. :||
+open(Q,$0);while(&lt;Q&gt;){if(/^#(.*)$/){for(split('-',$1)){$q=0;for(split){s/\|
+/:.:/xg;s/:/../g;$Q=$_?length:$_;$q+=$q?$Q:$Q*20;}print chr($q);}}}print"\n";
+#.: ::||-| .||-| :|||-| ::||-| ||-:: :|||-| .:|
+    </pre>
+    </li>
+  </ul>
+</li>
+<li class="incremental">Ah, c'est du <b>Perl</b></li>
+<li class="incremental"><b>NON</b></li>
+<li class="incremental">Mais il y a de bons outils en Perl, qu'on peut utiliser et intégrer dans notre projet</li>
+<li class="incremental">=&gt; Pas (trop) d'intégrisme anti-Perl</li>
+</ul>
+</li>
+
+<li class="slide">
+<h1>Quel langage utiliser ?</h1>
+<p>Solutions possibles :</p>
+<ul>
+<li>Solution 3 : Python</li>
+<li><pre class="sh_python">
+def getldapinfos(ldappointer, file):
+                """ get uid and mailhost from ldap then print on stdout uid IN CNAME mailhost """
+                """ in case of error for an entry stderr will be used """
+                ...
+                if I_HAS_PYTHON == True:
+                        for entry in resultlist:
+                                    for fields in entry:
+                                            res = myreg.match(entry[1]["mailHost"][0])
+                                            if res != None:
+                                                    file.write("%s.imap.mail\tIN\tCNAME\t%s.\n" %( entry[1]["uid"][0], res.group(1)))
+                        return 0
+
+</pre>
+</li>
+<li class="incremental"><b>NON</b></li>
+</ul>
+</li>
+
+
+<li class="slide">
+<h1>Quel langage utiliser ?</h1>
+<p>Solutions possibles :</p>
+<ul class="incremental">
+<li>Solution 4 : Ruby
+  <ul>
+    <li>Langage clair, facile à lire ET a écrire</li>
+    <li>Orienté Objet, typage dynamique</li>
+    <li>Le meilleur de Perl, Python (et un peu Smalltalk) dans un seul langage</li>
+  </ul>
+</li>
+<li><b>OUI !</b></li>
+</ul>
+</li>
+
+<li class="slide">
+<h1>Structure du programme</h1>
+<p>Dans la migration, il y a plusieurs tâches, séquentielles ou pas, à enchaîner</p>
+<p class="incremental">On veut :</p>
+<ul class="incremental">
+<li>Avoir des dépendances entre tâches</li>
+<li>Pouvoir préciser en ligne de commande une tâche en particulier</li>
+<li>Minimiser le nombre de programmes/scripts</li>
+<li>Ne pas avoir à coder du <b>getopt</b> ou équivalent</li>
+</ul>
+<p class="incremental">Pourquoi pas <b>Makefile</b> ?</p>
+</li>
+
+<li class="slide">
+<h1>Version Makefile</h1>
+<pre class="sh_makefile">
+INFILE  := customer-orig.ldif
+OUTFILE := customer-clean.ldif
+CLEANER := ./customer-clean-ldif.rb
+ROOTDN  := "cn=admin, o=customer, c=fr"
+ROOTPW  := "XXXXX"
+
+clean_ldif:
+        ssh old-srv "slapcat" > $(INFILE)
+        $(CLEANER) $(INFILE) > $(OUTFILE)
+
+test_ldif: clean_ldif
+        ldapadd -n -x -h localhost -D $(ROOTDN) -w $(ROOTPW) -f $(OUTFILE)
+#...etc...
+</pre>
+<ul class="incremental">
+  <li>C'est pas mal</li>
+  <li>Ca marche plus ou moins, pour les 1ères tâches simple</li>
+  <li>Mais on peut mieux faire<li>
+</ul>
+</li>
+
+<li class="slide">
+<h1>Here comes Rake!</h1>
+<p>Rake est un logiciel écrit en Ruby, qui permet de décrire et de contrôler des tâches
+à la Makefile</p>
+<p>Dans un fichier Rakefile on n'écrit que du Ruby</p>
+<ul class="incremental">
+<li><b>Big love!</b></li>
+</ul>
+</li>
+
+<li class="slide">
+<h1>Version Makefile</h1>
+<pre class="sh_makefile">
+INFILE  := customer-orig.ldif
+OUTFILE := customer-clean.ldif
+CLEANER := ./customer-clean-ldif.rb
+ROOTDN  := "cn=admin, o=customer, c=fr"
+ROOTPW  := "XXXXX"
+
+all:
+        @echo "Vous devez specifier la commande a executer"
+        exit 1
+
+clean_ldif:
+        ssh old-srv "slapcat" > $(INFILE)
+        $(CLEANER) $(INFILE) > $(OUTFILE)
+
+test_ldif: clean_ldif
+        ldapadd -n -x -h localhost -D $(ROOTDN) -w $(ROOTPW) -f $(OUTFILE)
+#...etc...
+</pre>
+<ul class="incremental">
+  <li>C'est pas mal</li>
+  <li>Ca marche plus ou moins, pour les 1ères tâches simple</li>
+  <li>Mais on peut mieux faire<li>
+</ul>
+</li>
+
+<li class="slide">
+    <h1>Colorisation de code</h1>
+    <pre class="sh_ruby">
+puts "Envoi en local d'un mail de #{user_from} vers #{users_to}.."
+# handling exceptions
+begin
+ Net::SMTP.start('localhost', 25) do |smtpclient|
+   smtpclient.send_message(the_email, user_from, users_to_list)
+ end
+ puts "Mail envoyé"
+rescue Exception =&gt; e
+ print "Exception occured: " + e
+end </pre>
+</li>
+
+<li class="slide">
 <h1>What Is S5?</h1>
 <ul>
 <li>It's a <strong>S</strong>imple <strong>S</strong>tandards-based <strong>S</strong>lide <strong>S</strong>how <strong>S</strong>ystem</li>

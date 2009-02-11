@@ -204,6 +204,8 @@ def getldapinfos(ldappointer, file):
                                             res = myreg.match(entry[1]["mailHost"][0])
                                             if res != None:
                                                     file.write("%s.imap.mail\tIN\tCNAME\t%s.\n" %( entry[1]["uid"][0], res.group(1)))
+                                                    if entry[1]["name"] = "LOL!!11":
+                                                                 print "All your base are belong to us"
                         return 0
 
 </pre>
@@ -405,7 +407,7 @@ end
 if rdn_name == "ou" &amp;&amp; !attrs["objectclass"].include?("organizationalUnit")
   attrs["objectclass"] &lt;&lt; "organizationalUnit"
 end
-<pre>
+</pre>
 </li>
 
 <li class="slide">
@@ -489,6 +491,47 @@ end
     </li>
     <li>D'ailleurs ce projet utilise un programme Perl : <b><a href="http://www.linux-france.org/prj/imapsync/" rel="external">imapsync</a></b></li>
 </ul>
+</li>
+
+<li class="slide">
+    <h1>Remarques</h1>
+    <p>Améliorations possibles :</p>
+    <ul class="incremental">
+        <li>Meilleur traitement des erreurs</li>
+        <li>Logging, aujourd'hui quasi absent
+            <ul>
+                <li><code><a href"http://fr.wikipedia.org/wiki/GNU_Screen" rel="external">screen</a></code> est votre ami !</li>
+            </ul>
+        </li>
+        <li>Pas de tests
+            <ul>
+                <li>Question ouverte : comment tester proprement du code qui intéragit avec beaucoup d'éléments externes ?</li>
+            </ul>
+        </li>
+        <li>Beaucoup de librairies (Gems) à installer..
+            <ul>
+                <li>Besoin d'un version de Rubygems récente (problématique sur certaines distributions Linux)</li>
+            </ul>
+        </li>
+    </ul>
+</li>
+
+<li class="slide">
+    <h1>Conclusion / Conseils</h1>
+    <p>Mission réussie !</p>
+    <ul class="incremental">
+        <li>L'annuaire et les comptes sont migrés</li>
+        <li>Le client est content</li>
+        <li>Il dispose d'un bel exemple d'outil en Ruby, qu'il pourra réutiliser</li>
+        <li>On peut (et doit) écrire des outils propres, même s'ils sont « one shot »</li>
+        <li>Refactoring facile et le projet est « agile »</li>
+        <li>Git (ou SVN, ou Mercury, etc.) est aussi indispensable pour le sysadmin que pour le développeur</li>
+        <li>Il faut panacher les outils (et les langages)
+            <ul>
+                <li>Si nécessaire...</li>
+            </ul>
+        </li>
+    </ul>
 </li>
 
 <li class="slide">

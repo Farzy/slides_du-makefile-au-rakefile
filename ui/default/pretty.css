@@ -253,7 +253,7 @@ html>body .external {border-bottom: none;}
 
 .incremental, .incremental *, .incremental *:after {
   color: #67a1c1;
-  visibility: visible;
+  visibility: hidden;
 }
 
 img.incremental {

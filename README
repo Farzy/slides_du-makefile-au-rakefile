@@ -5,7 +5,8 @@ Apéro Ruby #11.
 
 Auteur : Farzad FARID <ffarid@pragmatic-source.com>
 Date : 11 février 2009
-URL : http://www.pragmatic-source.com/downloads/Apero-Ruby-11/
+URL présentation : http://www.pragmatic-source.com/downloads/Apero-Ruby-11/Du-Makefile-au-Rakefile/
+URL des sources : http://github.com/Farzy/slides_du-makefile-au-rakefile
 
 La présentation est basée sur l'outil S5 d'Eric Meyer et sur SHJS pour la
 colorisation syntaxique automatique.

@@ -15,6 +15,7 @@ colorisation syntaxique automatique.
 Le logo et les couleurs de fond proviennent du site <http://www.ruby-lang.org/>.
 
 Licence :
+
 * La présentation elle-même est distribué sous la licence
   Creative Commons BY-NC-SA 3.0
   <http://creativecommons.org/licenses/by-nc-sa/3.0/deed.fr>.

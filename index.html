@@ -253,8 +253,8 @@ ROOTDN  := "cn=admin, o=customer, c=fr"
 ROOTPW  := "XXXXX"
 
 clean_ldif:
-        ssh old-srv "slapcat" > $(INFILE)
-        $(CLEANER) $(INFILE) > $(OUTFILE)
+        ssh old-srv "slapcat" &gt; $(INFILE)
+        $(CLEANER) $(INFILE) &gt; $(OUTFILE)
 
 test_ldif: clean_ldif
         ldapadd -n -x -h localhost -D $(ROOTDN) -w $(ROOTPW) -f $(OUTFILE)
@@ -262,7 +262,7 @@ test_ldif: clean_ldif
 </pre>
 <ul class="incremental">
   <li>C'est pas mal</li>
-  <li>Ca marche plus ou moins, pour les 1ères tâches simple</li>
+  <li>Ca marche plus ou moins, pour les 1ères tâches simples</li>
   <li>Mais on peut mieux faire</li>
 </ul>
 </li>
@@ -380,7 +380,7 @@ namespace :ldap do
 <p>Comment fonctionne le script principal de nettoyage LDAP ?</p>
 <ul class="incremental">
 <li>C'est un programme indépendant du Rakefile (question de taille)</li>
-<li>Il nettoie en fait un dump LDIF, car c'est plus simple que de faire des manipulation directement avec le protocole LDAP</li>
+<li>Il nettoie en fait un dump LDIF, car c'est plus simple que de faire des manipulations directement avec le protocole LDAP</li>
 <li>Puis le dump est importé dans le nouvel annuaire</li>
 </ul>
 </li>
@@ -506,7 +506,7 @@ end
         </li>
         <li>Pas de tests
             <ul>
-                <li>Question ouverte : comment tester proprement du code qui intéragit avec beaucoup d'éléments externes ?</li>
+                <li>Question ouverte : comment tester proprement du code qui interagit avec beaucoup d'éléments externes ?</li>
             </ul>
         </li>
         <li>Beaucoup de librairies (Gems) à installer..
